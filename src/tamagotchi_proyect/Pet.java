@@ -7,6 +7,7 @@ import java.util.Random;
 
 public class Pet {
 	//atributos
+	private boolean vivo = true;
 	private String especie;
 	private String nombre;
 	private int peso_min;
@@ -17,9 +18,14 @@ public class Pet {
 	private int salud_max = 100;
 	private int salud;
 	private boolean enfermo;
+	private boolean puede_comer;
 	private int hambre;
+	private boolean puede_beber;
 	private int sed;
+	private int min_sed = 0;
+	private int puede_jugar;
 	private int aburrimiento;
+	private boolean puede_dormir;
 	private int sueño;
 	private boolean dormido = false;
 	private int tiempo_dormido = 0;
@@ -29,10 +35,12 @@ public class Pet {
 	private int suerte;
 	
 	
-	protected Pet(String especie, String nombre, int peso_min, int peso_max, int peso, int vida_max, int vida,
-			int salud_max, int salud, int hambre, int sed, int aburrimiento, int sueño, boolean dormido,
+	protected Pet(boolean vivo, String especie, String nombre, int peso_min, int peso_max, int peso, int vida_max,
+			int vida, int salud_max, int salud, boolean enfermo, boolean puede_comer, int hambre, boolean puede_beber,
+			int sed, int min_sed, int puede_jugar, int aburrimiento, boolean puede_dormir, int sueño, boolean dormido,
 			int tiempo_dormido, int edad, int tiempo, Random probabilidad, int suerte) {
 		super();
+		this.vivo = vivo;
 		this.especie = especie;
 		this.nombre = nombre;
 		this.peso_min = peso_min;
@@ -42,9 +50,15 @@ public class Pet {
 		this.vida = vida;
 		this.salud_max = salud_max;
 		this.salud = salud;
+		this.enfermo = enfermo;
+		this.puede_comer = puede_comer;
 		this.hambre = hambre;
+		this.puede_beber = puede_beber;
 		this.sed = sed;
+		this.min_sed = min_sed;
+		this.puede_jugar = puede_jugar;
 		this.aburrimiento = aburrimiento;
+		this.puede_dormir = puede_dormir;
 		this.sueño = sueño;
 		this.dormido = dormido;
 		this.tiempo_dormido = tiempo_dormido;
@@ -53,27 +67,29 @@ public class Pet {
 		this.probabilidad = probabilidad;
 		this.suerte = suerte;
 	}
-	
+
 	protected void Suerte() {
 		this.suerte = probabilidad.nextInt(100);
 	}
+	
+	protected void restar_suerte(int suerte_restada) {
+		this.suerte -= suerte_restada;
+	} 
 
 	protected void pasarTiempo() {
 		Suerte();
 		if(suerte < 20) {
-			this.salud -= 3;
-			this.hambre += 5;
-			this.sed += 5;
-			this.aburrimiento += 5;
-			this.sueño += 5;
-			this.aburrimiento += 5;
+			restar_salud(2);
+			sumar_hambre(5);
+			sumar_sed(5);
+			sumar_sueño(5);
+			sumar_aburrimiento(5);
 		}else {
-			this.salud -= 1;
-			this.hambre += 3;
-			this.sed += 3;
-			this.aburrimiento += 3;
-			this.sueño += 3;
-			this.aburrimiento += 3;
+			restar_salud(1);
+			sumar_hambre(3);
+			sumar_sed(3);
+			sumar_sueño(3);
+			sumar_aburrimiento(3);
 		}
 		this.tiempo += 1;
 		
@@ -85,6 +101,32 @@ public class Pet {
 			cumpleaños();
 			tiempo = 0;
 		}
+		
+		//resta vida si algun atributo esta muy alto o muy bajo
+		if(this.salud <= 45) {
+			restar_vida(3);
+		}
+		if(this.hambre >= 50) {
+			restar_vida(3);
+		}
+		if(this.sed >= 50) {
+			restar_vida(3);
+		}
+		if(this.aburrimiento >= 60) {
+			restar_vida(3);
+		}
+		if(this.sueño >= 30) {
+			restar_vida(3);
+		}
+		if(this.peso >= peso_max-40) {
+			restar_vida(3);
+		}
+		if(this.peso <= peso_min+40) {
+			restar_vida(3);
+		}
+		if(this.vida <= 0) {
+			muerto();
+		}
 	}
 	
 	public void CicloVida() {
@@ -95,9 +137,15 @@ public class Pet {
 	}
 	
 	protected void cumpleaños() {
-		this.edad += 1;
-		cambiar_peso_max_min();
-		cambiar_vida_max();
+		if(vivo) {
+			if(this.edad < 10) {
+				this.edad += 1;
+				cambiar_peso_max_min();
+				cambiar_vida_max();
+			}else {
+				muerto();
+			}
+		}
 	}
 
 	protected void cambiar_peso_max_min() {
@@ -112,11 +160,10 @@ public class Pet {
 	}
 	
 	protected void restar_peso(int peso_restada) {
-		if(this.peso > peso_min && this.suerte < 15) {
-			this.peso -= peso_restada - 10;
-		}else {
-			if(this.peso > peso_min) {
-				this.peso -= peso_restada;
+		if(this.peso - peso_restada > this.peso_min) {
+			this.peso -= peso_restada;
+			}else {
+				this.peso = this.peso_min;
 			}
 		}
 	}
@@ -132,35 +179,67 @@ public class Pet {
 	}
 	
 	protected void restar_vida(int vida_restada) {
-		if(this.vida >= 0) {
-			this.vida -= vida_restada;
-		}
-	}
-	
-	protected void sumar_vida(int vida_sumada) {
-		if(this.vida + vida_sumada <= vida_max) {
-			this.vida += vida_sumada;
-		}
-	}
-	
-	protected void sumar_hambre(int hambre_sumada) {
-		if(this.hambre < 100 && this.suerte <= 30) {
-			this.hambre += hambre_sumada + 20;
+		if(this.vivo && this.vida - vida_restada < 0) {
+			this.vida = 0;
 		}else {
-			if(this.hambre < 100) {
-				this.hambre += hambre_sumada;
+			if(this.vivo && this.vida - vida_restada > 0) {
+				this.vida -= vida_restada;
 			}
 		}
 	}
 	
+	protected void sumar_vida(int vida_sumada) {
+		if(vivo) {
+			if(this.suerte >= 45) {
+				if(this.vida + vida_sumada + 20 <= vida_max) {
+					this.vida += vida_sumada + 20;
+				}else {
+					this.vida = vida_max;
+				}
+			}else {
+				if(this.vida + vida_sumada <= vida_max) {
+					this.vida += vida_sumada;
+				}else {
+					this.vida = vida_max;
+				}
+			}
+		}
+	}
+	
+	protected void sumar_hambre(int hambre_sumada) {
+		if(this.suerte <= 20) {
+			this.hambre += hambre_sumada + 20;
+		}else {
+			this.hambre += hambre_sumada;
+		}
+	}
+	
 	protected void restar_hambre(int hambre_restada) {
-		if(this.hambre > 0) {
-			this.hambre -= hambre_restada;
+		Suerte();
+		if(this.hambre >= 30) {
+			this.puede_comer = true;
+		}else {
+			this.puede_comer = false;
+		}
+		if(vivo && this.puede_comer) {
+			if (this.suerte >= 30) {
+				if(this.hambre - hambre_restada - 10 < 0) {
+					this.hambre = hambre_restada;
+				}else {
+					this.hambre -= hambre_restada - 10;
+				}
+			}else {
+				if(this.hambre - hambre_restada < 0) {
+					this.hambre = hambre_restada;
+				}else {
+					this.hambre -= hambre_restada;
+				}
+			}
 		}
 	}
 	
 	protected void sumar_sed(int sed_sumada) {
-		if(this.sed < 100 && this.suerte <= 35 ) {
+		if(this.suerte <= 35 ) {
 			this.sed += sed_sumada + 25;
 		}else {
 			if(this.sed < 100) {
@@ -170,32 +249,51 @@ public class Pet {
 	}
 	
 	protected void restar_sed(int sed_restada) {
-		if(this.sed > 0) {
-			this.sed -= sed_restada;
+		Suerte();
+		if(this.sed >= 30) {
+			this.puede_beber = true;
+		}else {
+			this.puede_beber = false;
+		}
+		if(this.vivo && this.puede_beber) {
+			if(this.suerte <= 5 && this.sed - sed_restada - 20 < 0) {
+				this.sed = min_sed ;
+			}else {
+				if(this.suerte <= 5) {
+					this.sed -= sed_restada - 20;
+				}else {
+					if(this.sed - sed_restada < 0) {
+						this.sed = this.min_sed;
+					}else {
+						this.sed -= sed_restada;
+					}
+				}
+			}
 		}
 	}
 	
 	protected void sumar_aburrimiento(int aburrimiento_sumada) {
-		if(this.aburrimiento < 100) {
-			this.aburrimiento += aburrimiento_sumada;
-		}
+		this.aburrimiento += aburrimiento_sumada;
 	}
 	
 	protected void restar_aburrimiento(int aburrimiento_restada) {
-		if(this.aburrimiento > 0) {
+		if(this.aburrimiento > 0 && this.vivo) {
 			this.aburrimiento -= aburrimiento_restada;
 		}
 	}
 	
 	protected void sumar_sueño(int sueño_sumada) {
-		if(this.sueño < 100) {
-			this.sueño += sueño_sumada;
-		}
+		this.sueño += sueño_sumada;
 	}
 	
 	protected void restar_sueño(int sueño_restada) {
-		if(this.sueño > 0) {
-			this.sueño -= sueño_restada;
+		Suerte();
+		if(this.puede_dormir && this.vivo && this.suerte >= 35) {
+			this.sueño -= sueño_restada - 10;
+		}else {
+			if(this.puede_dormir && this.vivo) {
+				this.sueño -= sueño_restada;
+			}
 		}
 	}
 	
@@ -203,7 +301,7 @@ public class Pet {
 		if(dormido == false) {
 			dormido = true;
 		}else {
-			if(this.tiempo_dormido <= 5) {
+			if(this.tiempo_dormido >= 5) {
 				dormido = false;
 				this.tiempo_dormido = 0;
 			}
@@ -213,28 +311,39 @@ public class Pet {
 	protected void sumar_salud(int salud_sumada) {
 		if(this.salud + salud_sumada <= this.salud_max) {
 			salud += salud_sumada;
+		}else {
+			this.salud = this.salud_max;
 		}
 	}
 	
 	protected void restar_salud(int salud_restada) {
-		if(this.salud > 0) {
-			this.salud -= salud_restada;
-		}
+		this.salud -= salud_restada;
 	}
 	
 	protected void jugar(int salud_sumada, int aburrimiento_restada, int sueño_sumada, int hambre_sumada, int sed_sumada, int peso_restada) {
+		Suerte();
 		sumar_salud(salud_sumada);
 		restar_aburrimiento(aburrimiento_restada);
 		sumar_sueño(sueño_sumada);
 		sumar_hambre(hambre_sumada);
 		sumar_sed(sed_sumada);
 		restar_peso(peso_restada);
-		//agregar probabilidad de restar vida
+		
+		if(this.suerte <= 25) {
+			restar_salud(-5);
+		}
 	}
 	
-	protected void comer(int salud_sumada, int salud_restada,int sueño_sumada, int hambre_restada, int sed_sumada, int peso_sumada) {
+	protected void comer(int salud_sumada, int sueño_sumada, int hambre_restada, int sed_sumada, int peso_sumada) {
+		Suerte();
+		if(this.suerte <= 10) {
+			sumar_hambre(5);
+			sumar_sueño(5);
+			sumar_sed(5);
+			restar_salud(-5);
+		}
 		sumar_salud(salud_sumada);
-		restar_salud(salud_restada);
+		sumar_salud(salud_sumada);
 		sumar_sueño(sueño_sumada);
 		restar_hambre(hambre_restada);
 		sumar_sed(sed_sumada);
@@ -263,6 +372,10 @@ public class Pet {
 		if(dormido == true) {
 			estado_dormido();
 		}
+	}
+	
+	protected void muerto() {
+		this.vivo = false;
 	}
 	
 }
