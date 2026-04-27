@@ -46,23 +46,23 @@ public class Pet {
 		this.peso_min = peso_min;
 		this.peso_max = peso_max;
 		this.peso = peso;
-		this.vida_max = vida_max;
-		this.vida = vida;
-		this.salud_max = salud_max;
-		this.salud = salud;
+		this.vida_max = 25;
+		this.vida = 25;
+		this.salud_max = 100;
+		this.salud = 100;
 		this.enfermo = enfermo;
 		this.puede_comer = puede_comer;
-		this.hambre = hambre;
+		this.hambre = 0;
 		this.puede_beber = puede_beber;
-		this.sed = sed;
+		this.sed = 0;
 		this.min_sed = min_sed;
 		this.puede_jugar = puede_jugar;
-		this.aburrimiento = aburrimiento;
+		this.aburrimiento = 0;
 		this.puede_dormir = puede_dormir;
-		this.sueño = sueño;
+		this.sueño = 0;
 		this.dormido = dormido;
 		this.tiempo_dormido = tiempo_dormido;
-		this.edad = edad;
+		this.edad = 0;
 		this.tiempo = tiempo;
 		this.probabilidad = probabilidad;
 		this.suerte = suerte;
@@ -166,7 +166,6 @@ public class Pet {
 				this.peso = this.peso_min;
 			}
 		}
-	}
 	
 	protected void cambiar_vida_max() {
 		if (this.edad < 4) {
@@ -330,7 +329,7 @@ public class Pet {
 		restar_peso(peso_restada);
 		
 		if(this.suerte <= 25) {
-			restar_salud(-5);
+			restar_salud(7);
 		}
 	}
 	
@@ -340,8 +339,8 @@ public class Pet {
 			sumar_hambre(5);
 			sumar_sueño(5);
 			sumar_sed(5);
-			restar_salud(-5);
-		}
+			restar_salud(5);
+			System.out.println(this.nombre + " se enfermo del estomago");		}
 		sumar_salud(salud_sumada);
 		sumar_salud(salud_sumada);
 		sumar_sueño(sueño_sumada);
@@ -376,6 +375,214 @@ public class Pet {
 	
 	protected void muerto() {
 		this.vivo = false;
+	}
+
+	public boolean isVivo() {
+		return vivo;
+	}
+
+	public void setVivo(boolean vivo) {
+		this.vivo = vivo;
+	}
+
+	public String getEspecie() {
+		return especie;
+	}
+
+	public void setEspecie(String especie) {
+		this.especie = especie;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public int getPeso_min() {
+		return peso_min;
+	}
+
+	public void setPeso_min(int peso_min) {
+		this.peso_min = peso_min;
+	}
+
+	public int getPeso_max() {
+		return peso_max;
+	}
+
+	public void setPeso_max(int peso_max) {
+		this.peso_max = peso_max;
+	}
+
+	public int getPeso() {
+		return peso;
+	}
+
+	public void setPeso(int peso) {
+		this.peso = peso;
+	}
+
+	public int getVida_max() {
+		return vida_max;
+	}
+
+	public void setVida_max(int vida_max) {
+		this.vida_max = vida_max;
+	}
+
+	public int getVida() {
+		return vida;
+	}
+
+	public void setVida(int vida) {
+		this.vida = vida;
+	}
+
+	public int getSalud_max() {
+		return salud_max;
+	}
+
+	public void setSalud_max(int salud_max) {
+		this.salud_max = salud_max;
+	}
+
+	public int getSalud() {
+		return salud;
+	}
+
+	public void setSalud(int salud) {
+		this.salud = salud;
+	}
+
+	public boolean isEnfermo() {
+		return enfermo;
+	}
+
+	public void setEnfermo(boolean enfermo) {
+		this.enfermo = enfermo;
+	}
+
+	public boolean isPuede_comer() {
+		return puede_comer;
+	}
+
+	public void setPuede_comer(boolean puede_comer) {
+		this.puede_comer = puede_comer;
+	}
+
+	public int getHambre() {
+		return hambre;
+	}
+
+	public void setHambre(int hambre) {
+		this.hambre = hambre;
+	}
+
+	public boolean isPuede_beber() {
+		return puede_beber;
+	}
+
+	public void setPuede_beber(boolean puede_beber) {
+		this.puede_beber = puede_beber;
+	}
+
+	public int getSed() {
+		return sed;
+	}
+
+	public void setSed(int sed) {
+		this.sed = sed;
+	}
+
+	public int getMin_sed() {
+		return min_sed;
+	}
+
+	public void setMin_sed(int min_sed) {
+		this.min_sed = min_sed;
+	}
+
+	public int getPuede_jugar() {
+		return puede_jugar;
+	}
+
+	public void setPuede_jugar(int puede_jugar) {
+		this.puede_jugar = puede_jugar;
+	}
+
+	public int getAburrimiento() {
+		return aburrimiento;
+	}
+
+	public void setAburrimiento(int aburrimiento) {
+		this.aburrimiento = aburrimiento;
+	}
+
+	public boolean isPuede_dormir() {
+		return puede_dormir;
+	}
+
+	public void setPuede_dormir(boolean puede_dormir) {
+		this.puede_dormir = puede_dormir;
+	}
+
+	public int getSueño() {
+		return sueño;
+	}
+
+	public void setSueño(int sueño) {
+		this.sueño = sueño;
+	}
+
+	public boolean isDormido() {
+		return dormido;
+	}
+
+	public void setDormido(boolean dormido) {
+		this.dormido = dormido;
+	}
+
+	public int getTiempo_dormido() {
+		return tiempo_dormido;
+	}
+
+	public void setTiempo_dormido(int tiempo_dormido) {
+		this.tiempo_dormido = tiempo_dormido;
+	}
+
+	public int getEdad() {
+		return edad;
+	}
+
+	public void setEdad(int edad) {
+		this.edad = edad;
+	}
+
+	public int getTiempo() {
+		return tiempo;
+	}
+
+	public void setTiempo(int tiempo) {
+		this.tiempo = tiempo;
+	}
+
+	public Random getProbabilidad() {
+		return probabilidad;
+	}
+
+	public void setProbabilidad(Random probabilidad) {
+		this.probabilidad = probabilidad;
+	}
+
+	public int getSuerte() {
+		return suerte;
+	}
+
+	public void setSuerte(int suerte) {
+		this.suerte = suerte;
 	}
 	
 }
